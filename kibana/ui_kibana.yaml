@@ -1,0 +1,21 @@
+version: '3'
+services:
+
+    kibana:
+        image: my-kibana:latest
+        container_name: kibana
+        build:
+         context: ./kibana/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: kibana
+        ports:
+          - "5601:5601"
+        depends_on:
+          - elastic1
+          - elastic2
+          - elastic3
+        environment:
+          ELASTIC_SERVERS: elastic1:9200,elastic2:9200,elastic3:9200
+        volumes:
+          - ./kibana.yml:/etc/kibana/kibana.yml

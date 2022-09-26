@@ -1,0 +1,89 @@
+version: '2.2'
+services:
+
+    elastic1:
+        image: my-elastic:latest
+        container_name: elastic1
+        build:
+         context: ./elastic/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: elastic1
+        ports:
+          - "9200:9200"
+        environment:
+          SERVER_ID: 1
+          PEER_SERVERS: elastic2:22,elastic3:22
+        volumes:
+          - ./elasticsearch.yml:/elastic1/elasticsearch.yml
+          - ./secrets/elastic1.key:/etc/elasticsearch/certs/elastic1.key:rw
+          - ./secrets/elastic1.crt:/etc/elasticsearch/certs/elastic1.crt:rw
+          - ./ca/elk-ca.crt:/etc/elasticsearch/certs/elk-ca.crt:rw
+          - ./user_details:/data:rw
+        healthcheck:
+         test: curl --cacert /etc/elasticsearch/certs/elk-ca.crt -s https://elastic1:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+         interval: 30s
+         timeout: 10s
+         retries: 20
+
+    elastic2:
+        image: my-elastic:latest
+        container_name: elastic2
+        build:
+         context: ./elastic/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: elastic2
+        ports:
+          - "9300:9200"
+        environment:
+          SERVER_ID: 2
+          PEER_SERVERS: elastic3:22,elastic1:22
+        volumes:
+          - ./elasticsearch.yml:/elastic2/elasticsearch.yml
+          - ./secrets/elastic2.key:/etc/elasticsearch/certs/elastic2.key:rw
+          - ./secrets/elastic2.crt:/etc/elasticsearch/certs/elastic2.crt:rw
+          - ./ca/elk-ca.crt:/etc/elasticsearch/certs/elk-ca.crt:rw
+
+    elastic3:
+        image: my-elastic:latest
+        container_name: elastic3
+        build:
+         context: ./elastic/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: elastic3
+        ports:
+          - "9400:9200"
+        environment:
+          SERVER_ID: 3
+          PEER_SERVERS: elastic2:22,elastic1:22
+        volumes:
+          - ./elasticsearch.yml:/elastic3/elasticsearch.yml
+          - ./secrets/elastic3.key:/etc/elasticsearch/certs/elastic3.key:rw
+          - ./secrets/elastic3.crt:/etc/elasticsearch/certs/elastic3.crt:rw
+          - ./ca/elk-ca.crt:/etc/elasticsearch/certs/elk-ca.crt:rw
+
+
+    filebeat:
+        image: my-beat:latest
+        container_name: filebeat
+        build:
+         context: ./filebeat/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: filebeat
+        ports:
+          - "5044:5044"
+        #depends_on:
+        depends_on: {"elastic1": {"condition": "service_healthy"}}
+        environment:
+          ELASTIC_SERVERS: elastic1:9200,elastic2:9200,elastic3:9200,kibana:5601
+        volumes:
+          - ./beat.yml:/tmp/filebeat.yml
+          - /var/lib/docker/containers:/var/lib/docker/containers:ro
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+          - ./ca/elk-ca.crt:/certs/elk-ca.crt:rw
+          - ./secrets/filebeat.key:/certs/filebeat.key:rw
+          - ./secrets/filebeat.crt:/certs/filebeat.crt:rw
+          - ./user_details:/data:rw

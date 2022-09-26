@@ -1,0 +1,50 @@
+version: '3'
+services:
+
+    elastic1:
+        image: my-elastic:latest
+        container_name: elastic1
+        build:
+         context: ./elastic/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: elastic1
+        ports:
+          - "9200:9200"
+        environment:
+          SERVER_ID: 1
+          PEER_SERVERS: elastic2:22,elastic3:22
+        volumes:
+          - ./elasticsearch.yml:/elastic1/elasticsearch.yml
+
+    elastic2:
+        image: my-elastic:latest
+        container_name: elastic2
+        build:
+         context: ./elastic/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: elastic2
+        ports:
+          - "9300:9200"
+        environment:
+          SERVER_ID: 2
+          PEER_SERVERS: elastic3:22,elastic1:22
+        volumes:
+          - ./elasticsearch.yml:/elastic2/elasticsearch.yml
+
+    elastic3:
+        image: my-elastic:latest
+        container_name: elastic3
+        build:
+         context: ./elastic/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: elastic3
+        ports:
+          - "9400:9200"
+        environment:
+          SERVER_ID: 3
+          PEER_SERVERS: elastic2:22,elastic1:22
+        volumes:
+          - ./elasticsearch.yml:/elastic3/elasticsearch.yml

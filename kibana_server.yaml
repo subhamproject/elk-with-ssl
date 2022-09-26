@@ -1,0 +1,22 @@
+version: '2.2'
+services:
+   kibana:
+        image: my-kibana:latest
+        container_name: kibana
+        build:
+         context: ./kibana/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: kibana
+        ports:
+          - "5601:5601"
+        #depends_on: {"elastic1": {"condition": "service_healthy"}}
+        environment:
+          ELASTIC_SERVERS: elastic1:9200,elastic2:9200,elastic3:9200
+        volumes:
+          - ./kibana.yml:/tmp/kibana.yml
+          - ./ca/elk-ca.crt:/etc/kibana/certs/elk-ca.crt:rw
+          - ./ca/elk-ca.key:/etc/kibana/certs/elk-ca.key:rw
+          - ./secrets/kibana.crt:/etc/kibana/certs/kibana.crt:rw
+          - ./secrets/kibana.key:/etc/kibana/certs/kibana.key:rw
+          - ./user_details:/data:rw

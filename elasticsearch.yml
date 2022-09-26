@@ -1,0 +1,28 @@
+cluster.name: elastic-cluster
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+network.host: ["${HOSTNAME}"]
+discovery.seed_hosts: ["elastic1", "elastic2", "elastic3"]
+node.master: true
+node.voting_only: false
+node.data: true
+node.ingest: true
+node.ml: false
+xpack.ml.enabled: true
+cluster.remote.connect: false
+node.name: ${HOSTNAME}
+cluster.initial_master_nodes: ["elastic1", "elastic2", "elastic3"]
+xpack.security.audit.enabled: true
+xpack.security.audit.logfile.events.exclude: access_granted, run_as_granted
+xpack.monitoring.collection.enabled: true
+xpack.security.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.verification_mode: certificate
+xpack.security.transport.ssl.enabled: true
+xpack.security.http.ssl.key: certs/${HOSTNAME}.key
+xpack.security.http.ssl.certificate: certs/${HOSTNAME}.crt
+xpack.security.http.ssl.certificate_authorities: certs/elk-ca.crt
+xpack.security.transport.ssl.key: certs/${HOSTNAME}.key
+xpack.security.transport.ssl.certificate: certs/${HOSTNAME}.crt
+xpack.security.transport.ssl.certificate_authorities: certs/elk-ca.crt

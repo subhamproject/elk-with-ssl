@@ -1,0 +1,21 @@
+version: '3'
+services:
+
+    filebeat:
+        image: my-beat:latest
+        container_name: filebeat
+        build:
+         context: ./filebeat/
+         dockerfile: Dockerfile
+        restart: always
+        hostname: filebeat
+        ports:
+          - "5044:5044"
+        depends_on:
+          - elastic1
+          - elastic2
+          - elastic3
+        environment:
+          ELASTIC_SERVERS: elastic1:9200,elastic2:9200,elastic3:9200
+        volumes:
+          - ./filebeat.yml:/etc/filebeat/filebeat.yml
