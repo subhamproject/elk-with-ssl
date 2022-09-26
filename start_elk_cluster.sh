@@ -17,10 +17,8 @@ function check_exist() {
 
 check_exist
 
-script_path=$(realpath $(dirname $0))
-
 if [ ! -f "$(echo $script_path)/ca/elk-ca.crt" ];then
-./$(script_path)/create_certs.sh
+$(realpath $(dirname $0))/create_certs.sh
 fi
 
 

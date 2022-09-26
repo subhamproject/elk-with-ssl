@@ -25,6 +25,11 @@ services:
          interval: 30s
          timeout: 10s
          retries: 20
+        logging:
+          driver: "json-file"
+          options:
+           max-size: "10m"
+           max-file: "3"
 
     elastic2:
         image: my-elastic:latest
@@ -44,6 +49,11 @@ services:
           - ./secrets/elastic2.key:/etc/elasticsearch/certs/elastic2.key:rw
           - ./secrets/elastic2.crt:/etc/elasticsearch/certs/elastic2.crt:rw
           - ./ca/elk-ca.crt:/etc/elasticsearch/certs/elk-ca.crt:rw
+        logging:
+          driver: "json-file"
+          options:
+           max-size: "10m"
+           max-file: "3"
 
     elastic3:
         image: my-elastic:latest
@@ -63,6 +73,12 @@ services:
           - ./secrets/elastic3.key:/etc/elasticsearch/certs/elastic3.key:rw
           - ./secrets/elastic3.crt:/etc/elasticsearch/certs/elastic3.crt:rw
           - ./ca/elk-ca.crt:/etc/elasticsearch/certs/elk-ca.crt:rw
+        logging:
+          driver: "json-file"
+          options:
+           max-size: "10m"
+           max-file: "3"
+
 
 
     filebeat:
@@ -87,3 +103,8 @@ services:
           - ./secrets/filebeat.key:/certs/filebeat.key:rw
           - ./secrets/filebeat.crt:/certs/filebeat.crt:rw
           - ./user_details:/data:rw
+        logging:
+          driver: "json-file"
+          options:
+           max-size: "100m"
+           max-file: "20"

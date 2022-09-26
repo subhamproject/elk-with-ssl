@@ -20,3 +20,9 @@ services:
           - ./secrets/kibana.crt:/etc/kibana/certs/kibana.crt:rw
           - ./secrets/kibana.key:/etc/kibana/certs/kibana.key:rw
           - ./user_details:/data:rw
+        logging:
+          driver: "json-file"
+          options:
+           max-size: "10m"
+           max-file: "10"
+
