@@ -1,0 +1,9 @@
+
+manage index via kibana - refer below
+
+
+https://www.zylk.net/en/web-2-0/blog/-/blogs/snapshots-in-elastic-search-7?_com_liferay_blogs_web_portlet_BlogsPortlet_showOnlyIcons=true&scroll=_com_liferay_blogs_web_portlet_BlogsPortlet_discussionContainer
+
+https://levelup.gitconnected.com/snapshot-and-restore-elasticsearch-indices-d5b9434561c1
+
+https://kifarunix.com/backup-and-restore-elasticsearch-index-data/
